@@ -35,6 +35,7 @@ class MarketBloc extends Bloc<MarketEvent, MarketState> {
     on<_UpdateScreenStatus>(_updateScreenStatus);
     on<_UpdateListOfSymbol>(_updateListOfSymbols);
 
+    add(const MarketEvent.updateScreenStatus(LoadingStatuses.loading));
     _initializeSocketConnection();
     _fetchSymbolList();
     _setupSearchListener();
@@ -48,6 +49,7 @@ class MarketBloc extends Bloc<MarketEvent, MarketState> {
       listenToSocket();
     } catch (e) {
       // Handle error (e.g., logging)
+      add(const MarketEvent.updateScreenStatus(LoadingStatuses.error));
     }
   }
 
@@ -57,6 +59,7 @@ class MarketBloc extends Bloc<MarketEvent, MarketState> {
       add(MarketEvent.updateListOfSymbol(_allSymbols));
     } catch (e) {
       // Handle error (e.g., logging)
+      add(const MarketEvent.updateScreenStatus(LoadingStatuses.error));
     }
   }
 
@@ -128,7 +131,7 @@ class MarketBloc extends Bloc<MarketEvent, MarketState> {
     if (list.isNotEmpty) {
       list.take(20).forEach((value) => _subscribe(value.symbol!));
     }
-    emit(state.copyWith(allSymbolList: list));
+    emit(state.copyWith(allSymbolList: list, loadingStatus: LoadingStatuses.loaded));
   }
 
   void _subscribe(String symbol) {

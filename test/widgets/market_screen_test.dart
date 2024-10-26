@@ -15,8 +15,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockMarketBloc extends MockBloc<MarketEvent, MarketState> implements MarketBloc {
+  @override
   final searchController = TextEditingController();
+  @override
   final scrollController = ScrollController();
+  @override
   final socketController = StreamController<List<SocketSymbolData>>.broadcast();
 }
 
@@ -42,19 +45,22 @@ void main() {
   }
 
   testWidgets('renders CustomAppBar, SearchView, and ListView in MarketScreen', (WidgetTester tester) async {
+    // Given: The MarketScreen is initialized with an empty symbol list
     when(() => mockMarketBloc.state).thenReturn(
       const MarketState(allSymbolList: []),
     );
 
+    // When: The widget is pumped into the test environment
     await tester.pumpWidget(createTestableWidget());
 
+    // Then: CustomAppBar, SearchView, and ListView widgets should be displayed
     expect(find.byType(CustomAppBar), findsOneWidget);
     expect(find.byType(SearchView), findsOneWidget);
     expect(find.byType(ListView), findsOneWidget);
   });
 
   testWidgets('displays list of symbols in ListView', (WidgetTester tester) async {
-    // Arrange: Create mock data for the bloc state
+    // Given: The MarketScreen is initialized with a list of symbols
     final mockSymbols = [
       SymbolListResponseModel(
         symbol: 'AAPL',
@@ -72,26 +78,31 @@ void main() {
       MarketState(allSymbolList: mockSymbols),
     );
 
+    // When: The widget is pumped into the test environment
     await tester.pumpWidget(createTestableWidget());
 
-    // Assert: Check that the list displays the correct items
+    // Then: The ListView should display each symbol in the list
     expect(find.byType(TileView), findsNWidgets(mockSymbols.length));
     expect(find.text('Apple Inc'), findsOneWidget);
     expect(find.text('Alphabet Inc'), findsOneWidget);
   });
 
   testWidgets('updates search when text is entered', (WidgetTester tester) async {
+    // Given: The MarketScreen is initialized with an empty search field
     when(() => mockMarketBloc.state).thenReturn(const MarketState(allSymbolList: []));
+
     await tester.pumpWidget(createTestableWidget());
 
+    // When: The user enters text into the search field
     final searchField = find.byType(SearchView);
     await tester.enterText(searchField, 'AAPL');
 
+    // Then: The searchController should update with the entered text
     expect(mockMarketBloc.searchController.text, 'AAPL');
   });
 
   testWidgets('updates state when new symbols are added', (WidgetTester tester) async {
-    // Update state with symbols
+    // Given: The MarketScreen starts with an empty symbol list
     final updatedSymbols = [
       SymbolListResponseModel(
         symbol: 'MSFT',
@@ -100,10 +111,9 @@ void main() {
       ),
     ];
 
-    // Initial empty state
     when(() => mockMarketBloc.state).thenReturn(MarketState(allSymbolList: updatedSymbols));
 
-    // Emit new state with updated symbols
+    // When: A new state is emitted with the updated symbols
     whenListen(
       mockMarketBloc,
       Stream.fromIterable([
@@ -112,9 +122,9 @@ void main() {
     );
     await tester.pumpWidget(createTestableWidget());
 
-    // await tester.pumpAndSettle();
     await tester.pump();
-    // Check that the UI updates with the new symbol
+
+    // Then: The ListView should update to display the new symbols
     expect(find.text('Microsoft Corp'), findsOneWidget);
     expect(find.byType(TileView), findsOneWidget);
   });
