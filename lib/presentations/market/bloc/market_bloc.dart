@@ -44,7 +44,8 @@ class MarketBloc extends Bloc<MarketEvent, MarketState> {
 
   void _initializeSocketConnection() async {
     try {
-      var uri = Uri.parse("${ConnectionConstant.socketUrl}?token=${AppConstant.token}");
+      var uri = Uri.parse(
+          "${ConnectionConstant.socketUrl}?token=${AppConstant.token}");
       await locator<WebSocketClient>().connect(uri);
       listenToSocket();
     } catch (e) {
@@ -99,14 +100,19 @@ class MarketBloc extends Bloc<MarketEvent, MarketState> {
 
   void _setupScrollListener() {
     scrollController.addListener(() {
-      final firstVisibleIndex = scrollController.offset ~/ 60; // Adjust based on item height
+      final firstVisibleIndex =
+          scrollController.offset ~/ 60; // Adjust based on item height
       final lastVisibleIndex = firstVisibleIndex + 20;
-      manageSubscriptions(_getSymbolsInView(firstVisibleIndex, lastVisibleIndex), 10);
+      manageSubscriptions(
+          _getSymbolsInView(firstVisibleIndex, lastVisibleIndex), 10);
     });
   }
 
   List<String> _getSymbolsInView(int start, int end) {
-    return _allSymbols.sublist(start, end).map((symbol) => symbol.symbol!).toList();
+    return _allSymbols
+        .sublist(start, end)
+        .map((symbol) => symbol.symbol!)
+        .toList();
   }
 
   void _setupSearchListener() {
@@ -115,45 +121,56 @@ class MarketBloc extends Bloc<MarketEvent, MarketState> {
         add(MarketEvent.updateListOfSymbol(_allSymbols));
       } else {
         final filteredSymbols = _allSymbols
-            .where((symbol) => symbol.displaySymbol!.toLowerCase().contains(searchController.text.toLowerCase()))
+            .where((symbol) => symbol.displaySymbol!
+                .toLowerCase()
+                .contains(searchController.text.toLowerCase()))
             .toList();
         add(MarketEvent.updateListOfSymbol(filteredSymbols));
       }
     });
   }
 
-  FutureOr<void> _updateScreenStatus(_UpdateScreenStatus event, Emitter<MarketState> emit) {
+  FutureOr<void> _updateScreenStatus(
+      _UpdateScreenStatus event, Emitter<MarketState> emit) {
     emit(state.copyWith(loadingStatus: event.status));
   }
 
-  FutureOr<void> _updateListOfSymbols(_UpdateListOfSymbol event, Emitter<MarketState> emit) {
+  FutureOr<void> _updateListOfSymbols(
+      _UpdateListOfSymbol event, Emitter<MarketState> emit) {
     final list = event.list;
     if (list.isNotEmpty) {
       list.take(20).forEach((value) => _subscribe(value.symbol!));
     }
-    emit(state.copyWith(allSymbolList: list, loadingStatus: LoadingStatuses.loaded));
+    emit(state.copyWith(
+        allSymbolList: list, loadingStatus: LoadingStatuses.loaded));
   }
 
   void _subscribe(String symbol) {
     if (!subscribedSymbols.contains(symbol)) {
       subscribedSymbols.add(symbol);
-      locator<WebSocketClient>().send(jsonEncode({'type': 'subscribe', 'symbol': symbol}));
+      locator<WebSocketClient>()
+          .send(jsonEncode({'type': 'subscribe', 'symbol': symbol}));
     }
   }
 
   void _unsubscribe(String symbol) {
     if (subscribedSymbols.contains(symbol)) {
       subscribedSymbols.remove(symbol);
-      locator<WebSocketClient>().send(jsonEncode({'type': 'unsubscribe', 'symbol': symbol}));
+      locator<WebSocketClient>()
+          .send(jsonEncode({'type': 'unsubscribe', 'symbol': symbol}));
     }
   }
 
   void manageSubscriptions(List<String> symbolsInView, int maxSubscriptions) {
-    final symbolsToUnsubscribe = subscribedSymbols.where((symbol) => !symbolsInView.contains(symbol)).toList();
+    final symbolsToUnsubscribe = subscribedSymbols
+        .where((symbol) => !symbolsInView.contains(symbol))
+        .toList();
     symbolsToUnsubscribe.forEach(_unsubscribe);
 
     final symbolsToSubscribe = symbolsInView
-        .where((symbol) => !subscribedSymbols.contains(symbol) && subscribedSymbols.length < maxSubscriptions)
+        .where((symbol) =>
+            !subscribedSymbols.contains(symbol) &&
+            subscribedSymbols.length < maxSubscriptions)
         .toList();
     symbolsToSubscribe.forEach(_subscribe);
   }

@@ -17,7 +17,8 @@ class HttpRepository {
     FormData? formData,
   }) async {
     if (!await locator<NetworkInfoService>().checkConnectivityonLunching()) {
-      throw InternetConnectionException(message: "Please check your internet connection");
+      throw InternetConnectionException(
+          message: "Please check your internet connection");
     }
 
     final dioClient = _createDioClient();
@@ -61,11 +62,14 @@ class HttpRepository {
       case RequestType.get:
         return await dioClient.get(methodName, queryParameters: queryParam);
       case RequestType.post:
-        return await dioClient.post(methodName, data: data, queryParameters: queryParam);
+        return await dioClient.post(methodName,
+            data: data, queryParameters: queryParam);
       case RequestType.delete:
-        return await dioClient.delete(methodName, data: data, queryParameters: queryParam);
+        return await dioClient.delete(methodName,
+            data: data, queryParameters: queryParam);
       case RequestType.put:
-        return await dioClient.put(methodName, data: data, queryParameters: queryParam);
+        return await dioClient.put(methodName,
+            data: data, queryParameters: queryParam);
     }
   }
 }

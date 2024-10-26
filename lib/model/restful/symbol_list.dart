@@ -12,6 +12,8 @@ class SymbolListResponseModel {
   }
 
   static List<SymbolListResponseModel> fromJsonList(List<dynamic> result) {
-    return result.map((json) => SymbolListResponseModel.fromJson(json)).toList();
+    return result
+        .map((json) => SymbolListResponseModel.fromJson(json))
+        .toList();
   }
 }

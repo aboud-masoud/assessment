@@ -40,9 +40,11 @@ class _MarketScreenState extends State<MarketScreen> {
                       itemBuilder: (context, index) {
                         return TileView(
                           title: state.allSymbolList[index].displaySymbol ?? "",
-                          subtitle: state.allSymbolList[index].description ?? "",
+                          subtitle:
+                              state.allSymbolList[index].description ?? "",
                           symbol: state.allSymbolList[index].symbol ?? "",
-                          priceStream: context.read<MarketBloc>().socketController,
+                          priceStream:
+                              context.read<MarketBloc>().socketController,
                         );
                       },
                     ),

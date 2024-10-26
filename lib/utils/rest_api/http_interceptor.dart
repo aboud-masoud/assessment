@@ -6,12 +6,14 @@ import 'package:flutter/material.dart';
 
 class HttpInterceptor extends InterceptorsWrapper {
   @override
-  Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+  Future<void> onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
     return handler.next(options);
   }
 
   @override
-  Future<void> onResponse(Response response, ResponseInterceptorHandler handler) async {
+  Future<void> onResponse(
+      Response response, ResponseInterceptorHandler handler) async {
     try {
       if (await _validateResponse(response)) {
         handler.next(response); // Pass the response to the next interceptor
@@ -27,14 +29,16 @@ class HttpInterceptor extends InterceptorsWrapper {
   }
 
   Future<bool> _validateResponse(Response response) async {
-    debugPrint("Request: ${response.requestOptions.path}, Status Code: ${response.statusCode}");
+    debugPrint(
+        "Request: ${response.requestOptions.path}, Status Code: ${response.statusCode}");
 
     switch (response.statusCode) {
       case 200:
         return true;
       default:
         _logError(response, "Unexpected error");
-        throw _buildDioException(response, response.data["detail"]["message"], response.data["detail"]["request_id"]);
+        throw _buildDioException(response, response.data["detail"]["message"],
+            response.data["detail"]["request_id"]);
     }
   }
 
@@ -45,7 +49,8 @@ class HttpInterceptor extends InterceptorsWrapper {
     );
   }
 
-  DioException _buildDioException(Response response, String message, [String? requestId]) {
+  DioException _buildDioException(Response response, String message,
+      [String? requestId]) {
     return DioException(
       error: HttpException(
         status: response.statusCode!,

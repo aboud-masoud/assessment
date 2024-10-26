@@ -71,7 +71,8 @@ class _TileViewState extends State<TileView> {
         }
 
         // Extract the matching symbol data
-        final symbolData = snapshot.data!.where((element) => element.symbolName == widget.symbol);
+        final symbolData = snapshot.data!
+            .where((element) => element.symbolName == widget.symbol);
 
         if (symbolData.isNotEmpty) {
           return Text(
