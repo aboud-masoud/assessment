@@ -74,6 +74,7 @@ The `pubspec.yaml` file contains the following packages:
 
 This simplified structure enhances readability and maintainability for a small project. While this approach works well here, for larger applications, I recommend adding a UseCases layer to separate the service layer more distinctly from business logic.
 
+Please note : this can be discussed in further in the next call , because there's is many idea for this structure and that always depend on the project size and team .
 
 ## Potential Enhancements:
 
