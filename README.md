@@ -44,7 +44,13 @@ To run the project, ensure that Flutter is installed on your machine. Clone the 
 flutter run
 ```
 
+### Running the UnitTest
 
+To run the unit tests for this project, use the following command:
+
+```bash
+flutter test
+```
 
 ### Dependencies
 
